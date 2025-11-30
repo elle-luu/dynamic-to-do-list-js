@@ -3,14 +3,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const taskInput = document.getElementById('task-input');
     const taskList = document.getElementById('task-list');
 
-    function addTask() {
-        const taskText = taskInput.value.trim();
+    let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
 
-        if (taskText === "") {
-            alert("Please enter a task.");
-            return;
-        }
+    function saveTasks() {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
 
+    function createTaskElement(taskText) {
         const li = document.createElement('li');
         li.textContent = taskText;
 
@@ -20,21 +19,46 @@ document.addEventListener('DOMContentLoaded', function () {
 
         removeBtn.onclick = function () {
             taskList.removeChild(li);
+            const idx = tasks.indexOf(taskText);
+            if (idx > -1) {
+                tasks.splice(idx, 1);
+                saveTasks();
+            }
         };
 
         li.appendChild(removeBtn);
         taskList.appendChild(li);
-
-        taskInput.value = "";
     }
 
-    addButton.addEventListener('click', addTask);
+    function addTask(taskText = null, save = true) {
+        const text = taskText !== null ? taskText : taskInput.value.trim();
 
-    taskInput.addEventListener('keypress', function (event) {
-        if (event.key === 'Enter') {
-            addTask();
+        if (text === "") {
+            if (taskText === null) alert("Please enter a task.");
+            return;
         }
+
+        createTaskElement(text);
+
+        if (save) {
+            tasks.push(text);
+            saveTasks();
+        }
+
+        if (taskText === null) taskInput.value = "";
+    }
+
+    function loadTasks() {
+        tasks.forEach(taskText => addTask(taskText, false));
+    }
+
+    addButton.addEventListener('click', function () {
+        addTask();
     });
 
-    addTask();
+    taskInput.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') addTask();
+    });
+
+    loadTasks();
 });
