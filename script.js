@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const addButton = document.getElementById('add-task');
+    const addButton = document.getElementById('add-task-btn');
     const taskInput = document.getElementById('task-input');
     const taskList = document.getElementById('task-list');
 
@@ -19,9 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         removeBtn.onclick = function () {
             taskList.removeChild(li);
-            const idx = tasks.indexOf(taskText);
-            if (idx > -1) {
-                tasks.splice(idx, 1);
+            const index = tasks.indexOf(taskText);
+            if (index > -1) {
+                tasks.splice(index, 1);
                 saveTasks();
             }
         };
@@ -31,17 +31,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function addTask(taskText = null, save = true) {
-        const text = taskText !== null ? taskText : taskInput.value.trim();
+        const taskTextFinal = taskText !== null ? taskText : taskInput.value.trim();
 
-        if (text === "") {
+        if (taskTextFinal === "") {
             if (taskText === null) alert("Please enter a task.");
             return;
         }
 
-        createTaskElement(text);
+        createTaskElement(taskTextFinal);
 
         if (save) {
-            tasks.push(text);
+            tasks.push(taskTextFinal);
             saveTasks();
         }
 
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function loadTasks() {
-        tasks.forEach(taskText => addTask(taskText, false));
+        tasks.forEach(text => addTask(text, false));
     }
 
     addButton.addEventListener('click', function () {
@@ -57,8 +57,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     taskInput.addEventListener('keypress', function (event) {
-        if (event.key === 'Enter') addTask();
+        if (event.key === 'Enter') {
+            addTask();
+        }
     });
 
     loadTasks();
 });
+
